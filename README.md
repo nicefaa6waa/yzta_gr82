@@ -86,6 +86,6 @@ BLIP2 (Bootstrapped Language-Image Pre-training) bir görme-dil modelidir ve gö
 ## Teşekkürler
 
 - **Model:** [BLIP2-OPT-6.7B](https://huggingface.co/Salesforce/blip2-opt-6.7b)
-- **Veri Seti:** [ROCOv2](https://github.com/radiclinic/roco)
+- **Veri Seti:** [ROCOv2](https://github.com/sctg-development/ROCOv2-radiology)
 
 Bu proje, en son teknoloji vision-language modellerini kullanarak tıbbi görüntü alt yazıları oluşturmanın bir demonstrasyonu olarak hizmet vermektedir ve gerçek dünya klinik uygulamaları için tasarlanmamıştır.
