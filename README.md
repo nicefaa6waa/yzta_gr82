@@ -8,7 +8,7 @@ Bu repo, **BLIP2-OPT-6.7B** modelinin radyoloji görüntüleri için tanımlayı
 
 ## Uyarı
 
-Bu proje **sadece araştırma ve öğrenme amaçlı** olarak gerçekleştirilmiştir ve bootcamp projem olarak sunulmaktadır. **Sınırlı hesaplama kaynakları** nedeniyle, model, **tek bir NVIDIA V100 GPU** kullanılarak azaltılmış sayıda epoch ile henüz eğitilmemiştir.
+Bu proje **sadece araştırma ve öğrenme amaçlı** olarak gerçekleştirilmiştir ve bootcamp projem olarak sunulmaktadır. **Sınırlı hesaplama kaynakları** nedeniyle, model, **iki adet NIVIDA Tesla T4 GPU** kullanılarak azaltılmış sayıda epoch ile henüz eğitilmemiştir.
 
 ---
 
