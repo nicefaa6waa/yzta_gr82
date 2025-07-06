@@ -1,5 +1,16 @@
-# BLIP2-OPT-6.7B ile Medical Image Captioning
+## Takım & Ürün İsmi
+<h1>RadiGlow</h1>
 
+## 👥 Takımımız
+|    | <div align="center">İsim</div>   | <div align="center">Rol</div>  | <div align="center">Sosyal Medya</div>     |
+| :-----------: | :---------- | :---------- | :----------: |
+|<img src="https://media.licdn.com/dms/image/v2/D4D03AQHJdXnh3RzhMA/profile-displayphoto-shrink_800_800/B4DZabQWAJGsAg-/0/1746361475913?e=1757548800&v=beta&t=b9Qn4X3kXCsNUrl9SIM-wm1Btt1fscIdb_ASbyPvsuU" alt="Profil Fotoğrafı" width="100"/>  | Ibrahim Mammadli| Product Owner/Developer     | [![linkedin](https://github.com/user-attachments/assets/3baa645a-33bc-4786-8327-cb0f92356f0a)](https://www.linkedin.com/in/ibrahim-mammadly/)   | 
+|<img src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png" alt="Foto" width="100"/>  | Meliha Atasoy    | Scrum Master     |  [![linkedin](https://github.com/user-attachments/assets/3baa645a-33bc-4786-8327-cb0f92356f0a)](https://www.linkedin.com/in/meliha-atasoy-70a8a428b/) |
+|<img src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png" alt="Foto" width="100"/> | Zeynep Yıldız    | Developer      |  [![linkedin](https://github.com/user-attachments/assets/3baa645a-33bc-4786-8327-cb0f92356f0a)](#)   |
+|<img src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png" alt="Foto" width="100"/>| Ahmet Özçelik    | Developer     |    [![linkedin](https://github.com/user-attachments/assets/3baa645a-33bc-4786-8327-cb0f92356f0a)](#)    |
+
+## Ürün Logosu
+<img src="https://github.com/nicefaa6waa/yzta_gr82/blob/a30f988be0c7067f9ceca6161b9c001c223e9864/59ef216c-bb6b-447e-9dbd-1b93594890ad.jpeg" alt="RadiGlow Logo" width="200"/>
 ## Genel Bakış
 
 Bu repo, **BLIP2-OPT-6.7B** modelinin radyoloji görüntüleri için tanımlayıcı alt yazılar oluşturmak üzere uygulanmasına odaklanmaktadır. Proje, tıbbi görüntü alt yazıları için **Radiology Object in Context Version 2 (ROCOv2)** adlı tıbbi veri seti üzerinde ince ayar yapılmış bir görme-dil modelini kullanır. Hesaplama kısıtlamalarını aşmak için **Parameter-Efficient Fine-Tuning (PEFT)** kullanılmış, bu da büyük modelin tıbbi alana verimli bir şekilde uyarlanmasını sağlamıştır.
@@ -73,7 +84,8 @@ BLIP2 (Bootstrapped Language-Image Pre-training) bir görme-dil modelidir ve gö
    - Modelin nihai performansı, test seti üzerinde değerlendirilecek ve doğru alt yazılar oluşturmaya odaklanılacaktır.
 
 ---
-
+## YZTA Sprint Raporları
+[Sprint Backlog](https://docs.google.com/spreadsheets/d/186WY3a52Ao72XRL9WEF60SxfzfMMOr-pQLSANZt3_ZM/edit?gid=0#gid=0)
 ## Gelecek Çalışmalar
 
 - **Veri Seti Kapsamını Genişletme:** Gri tonlamalı görüntüleri ekleyerek veri seti çeşitliliğini artırma.
