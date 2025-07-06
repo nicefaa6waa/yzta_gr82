@@ -86,6 +86,52 @@ BLIP2 (Bootstrapped Language-Image Pre-training) bir görme-dil modelidir ve gö
 ---
 ## YZTA Sprint Raporları
 [Sprint Backlog](https://docs.google.com/spreadsheets/d/186WY3a52Ao72XRL9WEF60SxfzfMMOr-pQLSANZt3_ZM/edit?gid=0#gid=0)
+
+### Sprint Hedefleri
+  - AI modelinin röntgen görüntülerini sınıflandırma doğruluğunu artırma
+  - Kullanıcı arayüzünde raporlama özelliği ekleme
+  - Backend API’lerini optimize etme
+  - Test senaryolarını tamamlama
+### Tahmin Edilen Tamamlanacak Puan (Story Points)
+  - Toplam Puan:100p
+    - Front-end: 8p
+    - Back-end: 10p
+    - Model optimization: 9p
+    - Mobile App Development: 8p
+    - Mobile App Development (IOS): 8p
+    - Uygulama Prosedürü:5p
+    - AI Entegrasyonu: 7p
+    - Scrum Master Coordination:3p
+### Tahmin Mantığı:
+  - Önceki sprintlerdeki hız (velocity) dikkate alınarak 
+  - Karmaşık AI işleri daha yüksek puanlandı
+  - UI ve test işleri daha düşük puanla tahmin edildi
+
+### DAİLY SCRUM
+  - AI model eğitim verileri hazırlandı
+  - Raporlama arayüzü tasarlandı
+  - Backend optimizasyon başladı
+  - Model doğruluk testleri yapıldı
+  - Sprint review hazırlıkları
+
+### Sprint Board Güncellemeleri
+Görev	Durum	Notlar
+AI Model Fine-Tuning	Devam Ediyor	Doğruluk %92’ye çıktı
+Raporlama UI	Devam Ediyor	Son testler yapılıyor
+Backend Optimizasyon	Beklemede	Response time %30 azaldı
+Test Senaryoları	Beklemede	API testleri tamamlandı
+
+
+### Sprint Review & Retrospective
+#### Başarılar:
+  - Model doğruluğu hedefe yaklaştı 
+  - Backend optimizasyon tamamlandı
+#### Geliştirilecek Noktalar:
+  - GPU kaynakları artırılmalı
+  - QA süreci daha erken başlatılmalı
+#### Aksiyonlar:
+  - Cloud GPU kaynağı için yeni bir platform bulunacak
+  - Bir sonraki sprintte testler daha erken başlatılacak
 ## Gelecek Çalışmalar
 
 - **Veri Seti Kapsamını Genişletme:** Gri tonlamalı görüntüleri ekleyerek veri seti çeşitliliğini artırma.
