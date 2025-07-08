@@ -1,4 +1,4 @@
-# 🌟 RadiGlow - Radyoloji AI Alt Yazı Üreticisi
+# 🌟 RadiGlow - Radyoloji AI Captioning
 
 ## 👥 Takımımız
 |    | <div align="center">İsim</div>   | <div align="center">Rol</div>  | <div align="center">Sosyal Medya</div>     |
