@@ -75,63 +75,9 @@ BLIP2 (Bootstrapped Language-Image Pre-training), görüntü ve metin temsilleri
 ---
 
 ## 📅 YZTA Sprint Raporları
-Sprint Backlog’a, Projeler kısmından veya [buraya tıklayarak](https://github.com/users/nicefaa6waa/projects/1) ulaşabilirsiniz.
+**Sprint Backlog’a**, Projeler kısmından veya [buraya tıklayarak](https://github.com/users/nicefaa6waa/projects/1) ulaşabilirsiniz.
 
-### Sprint Hedefleri
-- AI modelinin röntgen görüntülerini sınıflandırma doğruluğunu artırma.
-- Kullanıcı arayüzüne raporlama özelliği ekleme.
-- Backend API'lerini optimize etme.
-- Test senaryolarını tamamlama.
-
-### Tahmin Edilen Story Puanları
-- **Toplam Puan**: 100p
-  - Ön Yüz (Front-end): 8p
-  - Arka Uç (Back-end): 10p
-  - Model Optimizasyonu: 9p
-  - Mobil Uygulama Geliştirme (Android): 8p
-  - Mobil Uygulama Geliştirme (iOS): 8p
-  - Uygulama Prosedürü: 5p
-  - AI Entegrasyonu: 7p
-  - Scrum Master Koordinasyonu: 3p
-
-### Tahmin Mantığı
-- Önceki sprintlerdeki hız (velocity) dikkate alınarak.
-- Karmaşık AI işleri daha yüksek puanlandı.
-- UI ve test işleri daha düşük puanla tahmin edildi.
-
-### Günlük Scrum
-- AI model eğitim verileri hazırlandı.
-- Raporlama arayüzü tasarlandı.
-- Backend optimizasyon başladı.
-- Model doğruluk testleri yapıldı.
-- Sprint review hazırlıkları devam ediyor.
-
-### Sprint Board Güncellemeleri
-| **Görev**              | **Durum**    | **Notlar**                  |
-|-----------------------|---------------|----------------------------|
-| AI Model İnce Ayarı    | Devam Ediyor | Doğruluk %92'ye çıktı       |
-| Raporlama Arayüzü      | Devam Ediyor | Son testler yapılıyor       |
-| Backend Optimizasyonu  | Beklemede    | Yanıt süresi %30 azaldı     |
-| Test Senaryoları       | Beklemede    | API testleri tamamlandı     |
-
-### Sprint Review & Retrospective
-#### ✅ Başarılar
-- Model doğruluğu hedefe yaklaştı.
-- Backend optimizasyon tamamlandı.
-#### 🚧 Geliştirilecek Noktalar
-- GPU kaynakları artırılmalı.
-- QA süreci daha erken başlatılmalı.
-#### 🎯 Aksiyonlar
-- Cloud GPU kaynağı için yeni bir platform bulunacak.
-- Bir sonraki sprintte testler daha erken başlatılacak.
-
----
-
-## 🚀 Gelecek Çalışmalar
-- **Veri Seti Kapsamını Genişletme**: Gri tonlamalı görüntüleri ekleyerek veri seti çeşitliliğini artırma.
-- **Eğitim Optimizasyonu**: Daha fazla GPU veya bulut tabanlı kaynaklar kullanarak daha uzun eğitim oturumları ve hiperparametre ayarı yapma.
-- **Daha Büyük Mimari Denemeleri**: Alt yazı oluşturma kalitesini iyileştirmek için daha büyük görme-dil modelleriyle deneme yapma.
-- **Gelişmiş PEFT Teknikleri**: Eğitim performansını daha da optimize etmek için gelişmiş parametre-etkili teknikler deneme.
+**Sprint İnceleme ve Retrospektif** dosyasına, Projeler kısmından veya [buraya tıklayarak](https://github.com/users/nicefaa6waa/projects/2) ulaşabilirsiniz.
 
 ---
 
