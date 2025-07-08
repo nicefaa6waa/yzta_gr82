@@ -79,6 +79,9 @@ BLIP2 (Bootstrapped Language-Image Pre-training), görüntü ve metin temsilleri
 
 **Sprint İnceleme ve Retrospektif** dosyasına, Projeler kısmından veya [buraya tıklayarak](https://github.com/users/nicefaa6waa/projects/2) ulaşabilirsiniz.
 
+**Fotoğraflar ve Günlük Scrum Güncellemeleri'ne**, Projeler kısmından veya [buraya tıklayarak](https://github.com/users/nicefaa6waa/projects/3) ulaşabilirsiniz.
+
+
 ---
 
 ## 🙏 Teşekkürler
