@@ -18,9 +18,7 @@
 
 Bu depo, **BLIP2-OPT-6.7B** modelinin radyoloji görüntüleri için tanımlayıcı alt yazılar oluşturmak üzere uygulanmasına odaklanmaktadır. Proje, tıbbi görüntü alt yazıları için **Radyoloji Nesneleri Bağlamda Sürüm 2 (ROCOv2)** adlı tıbbi veri seti üzerinde ince ayar yapılmış bir görme-dil modelini kullanır. Hesaplama kısıtlamalarını aşmak için **Parametre-Etkili İnce Ayar (PEFT)** kullanılmış, bu da büyük modelin tıbbi alana verimli bir şekilde uyarlanmasını sağlamıştır.
 
-<div style="background-color: #f0f8ff; padding: 10px; border-left: 4px solid #007bff;">
-⚠️ **Uyarı**: Bu proje **sadece araştırma ve öğrenme amaçlı** olarak bootcamp projesi olarak gerçekleştirilmiştir. **Sınırlı hesaplama kaynakları** nedeniyle, model, henüz iki **NVIDIA Tesla T4 GPU** kullanılarak azaltılmış epoch ile eğitilmemiştir.
-</div>
+⚠️  **Uyarı**: Bu proje **sadece araştırma ve öğrenme amaçlı** olarak bootcamp projesi olarak gerçekleştirilmiştir. **Sınırlı hesaplama kaynakları** nedeniyle, model, henüz iki **NVIDIA Tesla T4 GPU** kullanılarak azaltılmış epoch ile eğitilmemiştir.
 
 ---
 
