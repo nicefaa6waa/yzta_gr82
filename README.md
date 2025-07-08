@@ -3,10 +3,10 @@
 ## 👥 Takımımız
 |    | <div align="center">İsim</div>   | <div align="center">Rol</div>  | <div align="center">Sosyal Medya</div>     |
 | :-----------: | :---------- | :---------- | :----------: |
-|<img src="https://media.licdn.com/dms/image/v2/D4D03AQHJdXnh3RzhMA/profile-displayphoto-shrink_800_800/B4DZabQWAJGsAg-/0/1746361475913?e=1757548800&v=beta&t=b9Qn4X3kXCsNUrl9SIM-wm1Btt1fscIdb_ASbyPvsuU" alt="İbrahim Foto" width="100"/>  | Ibrahim Mammadli | Ürün Sahibi / Geliştirici     | [![linkedin](https://img.shields.io/badge/LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/ibrahim-mammadly/)   | 
+|<img src="https://media.licdn.com/dms/image/v2/D4D03AQHJdXnh3RzhMA/profile-displayphoto-shrink_800_800/B4DZabQWAJGsAg-/0/1746361475913?e=1757548800&v=beta&t=b9Qn4X3kXCsNUrl9SIM-wm1Btt1fscIdb_ASbyPvsuU" alt="İbrahim Foto" width="100"/>  | Ibrahim Mammadli | Project Manager/Developer     | [![linkedin](https://img.shields.io/badge/LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/ibrahim-mammadly/)   | 
 |<img src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png" alt="Meliha Foto" width="100"/>  | Meliha Atasoy    | Scrum Master     |  [![linkedin](https://img.shields.io/badge/LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/meliha-atasoy-70a8a428b/) |
-|<img src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png" alt="Zeynep Foto" width="100"/> | Zeynep Yıldız    | Geliştirici      |  [![linkedin](https://img.shields.io/badge/LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](#)   |
-|<img src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png" alt="Ahmet Foto" width="100"/>| Ahmet Özçelik     | Geliştirici     |    [![linkedin](https://img.shields.io/badge/LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](#)    |
+|<img src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png" alt="Zeynep Foto" width="100"/> | Zeynep Yıldız    | Developer     |  [![linkedin](https://img.shields.io/badge/LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](#)   |
+|<img src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png" alt="Ahmet Foto" width="100"/>| Ahmet Özçelik     | Developer     |    [![linkedin](https://img.shields.io/badge/LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](#)    |
 
 
 ## 🎨 Ürün Logosu
