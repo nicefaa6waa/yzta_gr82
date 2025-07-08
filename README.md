@@ -75,7 +75,7 @@ BLIP2 (Bootstrapped Language-Image Pre-training), görüntü ve metin temsilleri
 ---
 
 ## 📅 YZTA Sprint Raporları
-[Spring Backlog'a Bakın](https://docs.google.com/spreadsheets/d/186WY3a52Ao72XRL9WEF60SxfzfMMOr-pQLSANZt3_ZM/edit?gid=0#gid=0)
+Sprint Backlog’a, Projeler kısmından veya [buraya tıklayarak](https://github.com/users/nicefaa6waa/projects/1) ulaşabilirsiniz.
 
 ### Sprint Hedefleri
 - AI modelinin röntgen görüntülerini sınıflandırma doğruluğunu artırma.
