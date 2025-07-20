@@ -136,6 +136,11 @@ Toplam Puan: 100p
 <img src="https://github.com/nicefaa6waa/yzta_gr82/blob/main/assets/09-07-2.jpeg" alt="Sprint 2 API Development" width="400"/>
 </div>
 
+### 📸 Uygulama Görseli
+<div align="center">
+<img src="https://github.com/nicefaa6waa/yzta_gr82/blob/main/assets/06-07.jpeg" alt="app" width="600"/>
+
+
 ### 🔄 Sprint Review & Retrospective
 
 #### ✅ Başarılar:
