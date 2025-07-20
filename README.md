@@ -8,9 +8,159 @@
 |<img src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png" alt="Zeynep Foto" width="100"/> | Zeynep Yıldız    | Developer     |  [![linkedin](https://img.shields.io/badge/LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](#)   |
 |<img src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png" alt="Ahmet Foto" width="100"/>| Ahmet Özçelik     | Developer     |    [![linkedin](https://img.shields.io/badge/LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](#)    |
 
-
 ## 🎨 Ürün Logosu
 ![RadiGlow Logosu](https://github.com/nicefaa6waa/yzta_gr82/blob/a30f988be0c7067f9ceca6161b9c001c223e9864/59ef216c-bb6b-447e-9dbd-1b93594890ad.jpeg)
+
+---
+
+## 📋 Sprint Boards
+
+<details>
+<summary>
+  <h3>🚀 Sprint 1 - Model Geliştirme ve Temel Özellikler</h3>
+</summary>
+
+### 🎯 Sprint Hedefleri
+- AI modelinin röntgen görüntülerini sınıflandırma doğruluğunu artırma
+- Kullanıcı arayüzünde raporlama özelliği ekleme
+- Backend API'lerini optimize etme
+- Test senaryolarını tamamlama
+
+### 📊 Story Points Dağılımı
+```
+Toplam Puan: 100p
+├── Front-end: 8p
+├── Back-end: 10p
+├── Model optimization: 9p
+├── Mobile App Development: 8p
+├── Mobile App Development (iOS): 8p
+├── Uygulama Prosedürü: 5p
+├── AI Entegrasyonu: 7p
+└── Scrum Master Coordination: 3p
+```
+
+### 📅 Daily Scrum Güncellemeleri
+<div align="center">
+<img src="https://github.com/nicefaa6waa/yzta_gr82/blob/main/assets/18-06.jpeg" alt="Sprint 1 Daily Scrum Board" width="400"/>
+<img src="https://github.com/nicefaa6waa/yzta_gr82/blob/main/assets/21-06.jpeg" alt="Sprint 1 Progress Tracking" width="400"/>
+</div>
+
+- ✅ AI model eğitim verileri hazırlandı
+- ✅ Raporlama arayüzü tasarlandı
+- 🔄 Backend optimizasyon başladı
+- ✅ Model doğruluk testleri yapıldı
+- 🔄 Sprint review hazırlıkları
+
+### 📋 Sprint Board Durumu
+
+| Görev | Durum | Notlar |
+|-------|-------|---------|
+| AI Model Fine-Tuning | 🔄 **Devam Ediyor** | Doğruluk %92'ye çıktı |
+| Raporlama UI | 🔄 **Devam Ediyor** | Son testler yapılıyor |
+| Backend Optimizasyon | ⏳ **Beklemede** | Response time %30 azaldı |
+| Test Senaryoları | ⏳ **Beklemede** | API testleri tamamlandı |
+
+### 📸 Sprint Görselleri
+<div align="center">
+<img src="https://github.com/nicefaa6waa/yzta_gr82/blob/main/assets/22-06.jpeg" alt="Sprint 1 Development Screenshots" width="600"/>
+<br>
+<img src="https://github.com/nicefaa6waa/yzta_gr82/blob/main/assets/26-06.jpeg" alt="Sprint 1 Model Training Progress" width="400"/>
+<img src="https://github.com/nicefaa6waa/yzta_gr82/blob/main/assets/29-06.jpeg" alt="Sprint 1 Testing Results" width="400"/>
+</div>
+
+### 🔄 Sprint Review & Retrospective
+
+#### ✅ Başarılar:
+- Model doğruluğu hedefe yaklaştı (%92)
+- Backend optimizasyon tamamlandı (Response time %30 azaldı)
+
+#### 🔧 Geliştirilecek Noktalar:
+- GPU kaynakları artırılmalı
+- QA süreci daha erken başlatılmalı
+
+#### 🎯 Aksiyonlar:
+- Cloud GPU kaynağı için yeni bir platform bulunacak
+- Bir sonraki sprintte testler daha erken başlatılacak
+
+</details>
+
+<details>
+<summary>
+  <h3>⚡ Sprint 2 - Optimizasyon ve Entegrasyon</h3>
+</summary>
+
+### 🎯 Sprint Hedefleri
+- Modelin 8-bit'e düşürerek VRAM kullanımını azaltma
+- API endpoint'lerinin tamamlanması
+- Ana sayfa UI/UX iyileştirmeleri 
+- Sensör verilerinin cloud'a iletilmesi 
+
+### 📊 Story Points Dağılımı
+```
+Toplam Puan: 100p
+├── Front-end: 10p
+├── Back-end: 8p
+├── Model optimization: 7p
+├── Mobile App Development: 5p
+├── Mobile App Development (iOS): 5p
+├── Uygulama Prosedürü: 6p
+├── AI Entegrasyonu: 8p
+└── Scrum Master Coordination: 8p
+```
+
+### 📅 Daily Scrum Güncellemeleri
+<div align="center">
+<img src="https://github.com/nicefaa6waa/yzta_gr82/blob/main/assets/04-07.jpeg" alt="Sprint 2 Daily Scrum Board" width="400"/>
+<img src="https://github.com/nicefaa6waa/yzta_gr82/blob/main/assets/05-07.jpeg" alt="Sprint 2 Model Optimization" width="400"/>
+</div>
+
+- ✅ Model VRAM'e sıkıştırıldı
+- ✅ Model train edildi
+- 🔄 Front-end kısmı geliştirilmeye başlandı
+- ✅ Model eğitildi
+
+### 📋 Sprint Board Durumu
+
+| Görev | Durum | Notlar |
+|-------|-------|---------|
+| Model'in 8-bit quantization'e düşürülmesi | ✅ **Tamamlandı** | VRAM kullanımı optimize edildi |
+| Model eğitimi | ✅ **Tamamlandı** | Başarılı deployment gerçekleşti |
+| API endpoint'leri | 🔄 **Devam ediyor** | %80 tamamlandı |
+| Ana sayfa UI/UX | 🔄 **Devam ediyor** | Responsive tasarım uygulanıyor |
+
+### 📸 Sprint Görselleri
+<div align="center">
+<img src="https://github.com/nicefaa6waa/yzta_gr82/blob/main/assets/06-07.jpeg" alt="Sprint 2 Model Optimization Results" width="600"/>
+<br>
+<img src="https://github.com/nicefaa6waa/yzta_gr82/blob/main/assets/09-07.jpeg" alt="Sprint 2 UI/UX Improvements" width="400"/> 
+<img src="https://github.com/nicefaa6waa/yzta_gr82/blob/main/assets/09-07-2.jpeg" alt="Sprint 2 API Development" width="400"/>
+</div>
+
+### 🔄 Sprint Review & Retrospective
+
+#### ✅ Başarılar:
+- Model doğruluğu hedefe yaklaştı
+- Model eğitildi ve başarıyla canlı ortama deploy edildi
+- Backend-Frontend eş zamanlı çalışma sorunsuz ilerledi
+- Sprint hedefleri tamamlandı
+
+#### 🔧 Geliştirilecek Noktalar:
+- GPU kaynakları artırılmalı
+- QA süreci daha erken başlatılmalı
+- Front-end kısmı geliştirilmeli
+
+#### 🎯 Aksiyonlar:
+- Bir sonraki sprintte testler daha erken başlatılacak
+- Verileri daha küçük parçalarda işleyeceğiz
+- Test senaryoları sprint başında yazılacak
+- Otomatik test pipeline'ı kurulacak
+
+### 📈 Sprint Performans Grafikleri
+<div align="center">
+<img src="https://github.com/nicefaa6waa/yzta_gr82/blob/main/assets/18-06-2.jpeg" alt="Sprint Performance Metrics Comparison" width="800"/>
+</div>
+
+</details>
 
 ---
 
@@ -73,12 +223,11 @@ BLIP2 (Bootstrapped Language-Image Pre-training), görüntü ve metin temsilleri
 ---
 
 ## 📅 YZTA Sprint Raporları
-**Sprint Backlog’a**, Projeler kısmından veya [buraya tıklayarak](https://github.com/users/nicefaa6waa/projects/1) ulaşabilirsiniz.
+**Sprint Backlog'a**, Projeler kısmından veya [buraya tıklayarak](https://github.com/users/nicefaa6waa/projects/1) ulaşabilirsiniz.
 
 **Sprint İnceleme ve Retrospektif** dosyasına, Projeler kısmından veya [buraya tıklayarak](https://github.com/users/nicefaa6waa/projects/2) ulaşabilirsiniz.
 
 **Fotoğraflar ve Günlük Scrum Güncellemeleri'ne**, Projeler kısmından veya [buraya tıklayarak](https://github.com/users/nicefaa6waa/projects/3) ulaşabilirsiniz.
-
 
 ---
 
