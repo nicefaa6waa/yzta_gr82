@@ -138,7 +138,7 @@ Toplam Puan: 100p
 
 ### 📸 Uygulama Görseli
 <div align="center">
-<img src="https://github.com/nicefaa6waa/yzta_gr82/blob/main/assets/06-07.jpeg" alt="app" width="600"/>
+<img src="https://github.com/nicefaa6waa/yzta_gr82/blob/main/assets/front-end-preview.jpeg" alt="app" width="600"/>
 
 
 ### 🔄 Sprint Review & Retrospective
