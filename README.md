@@ -167,6 +167,28 @@ Toplam Puan: 100p
 
 </details>
 
+<details>
+<summary>
+  <h3>🧭 Sprint Board Güncel</h3>
+</summary>
+
+### 📌 Genel Bilgilendirme
+
+👉 Mevcut Sprint Board'a erişmek için [buraya tıklayabilirsiniz](https://github.com/users/nicefaa6waa/projects/1).
+
+### 🗂️ Sprint Board
+<div align="center">
+  <img src="https://github.com/nicefaa6waa/yzta_gr82/blob/main/assets/sprint-board.png" alt="Güncel Sprint Board" width="800"/>
+</div>
+
+### 🕒 Sprint Board Zaman Çizelgesi
+<div align="center">
+  <img src="https://github.com/nicefaa6waa/yzta_gr82/blob/main/assets/sprint-board-timeline.png" alt="Sprint Board Timeline" width="800"/>
+</div>
+
+</details>
+
+
 ---
 
 ## 🌐 Genel Bakış
