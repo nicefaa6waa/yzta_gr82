@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RadiGlow - AI Medical Assistant</title>
-    <link rel="stylesheet" href="/static/css/styles.css">
+    <!-- FIXED: Add version number - change this number when you update CSS -->
+    <link rel="stylesheet" href="/static/css/styles.css?v=2025010802">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <!-- Animated background particles -->
@@ -28,9 +30,11 @@
             
             <div class="action-buttons">
                 <button class="btn btn-primary" onclick="startQuickConsultation()">
+                    <i class="fas fa-comments"></i>
                     Quick Consultation
                 </button>
                 <button class="btn btn-secondary" onclick="openModal('registerModal')">
+                    <i class="fas fa-unlock"></i>
                     Full Access
                 </button>
             </div>
@@ -51,23 +55,67 @@
             </div>
         </div>
 
-        <!-- Quick Consultation -->
-        <div class="quick-consultation" id="quickConsultation" style="display: none;">
-            <h2>Quick Medical Consultation</h2>
-            <div class="usage-counter" id="usageCounter">3/3 free messages remaining</div>
-            
-            <div class="chat-area">
-                <div class="input-area">
-                    <textarea 
-                        id="quickInput" 
-                        placeholder="Ask me any medical question..." 
-                        rows="3"
-                    ></textarea>
-                    <button class="btn btn-primary" onclick="Auth.handleQuickChat()">
-                        Send Message
-                    </button>
+        <!-- REDESIGNED Quick Consultation -->
+        <div class="quick-consultation-wrapper" id="quickConsultation" style="display: none;">
+            <div class="consultation-container">
+                <div class="consultation-header">
+                    <div class="header-content">
+                        <div class="consultation-title">
+                            <i class="fas fa-stethoscope"></i>
+                            <h2>Quick Medical Consultation</h2>
+                        </div>
+                        <button class="close-consultation" onclick="closeQuickConsultation()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="usage-display">
+                        <div class="usage-info">
+                            <i class="fas fa-heart"></i>
+                            <span id="usageCounter">3/3 free consultations remaining today</span>
+                        </div>
+                        <div class="reset-info" id="resetInfo">
+                            Resets at midnight
+                        </div>
+                    </div>
                 </div>
-                <div class="consultation-response" id="consultationResponse"></div>
+
+                <div class="consultation-body">
+                    <div class="chat-area" id="chatArea">
+                        <div class="welcome-message">
+                            <div class="ai-avatar">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="welcome-text">
+                                <h3>Welcome to RadiGlow AI</h3>
+                                <p>I'm here to help with your medical questions. Please describe your symptoms or concerns, and I'll provide guidance based on medical knowledge.</p>
+                                <div class="disclaimer">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <small>This is for informational purposes only. Always consult a healthcare professional for medical advice.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="input-section">
+                        <div class="input-wrapper">
+                            <textarea 
+                                id="quickInput" 
+                                placeholder="Describe your symptoms or ask a medical question..."
+                                rows="3"
+                                maxlength="500"
+                            ></textarea>
+                            <div class="input-actions">
+                                <div class="char-counter">
+                                    <span id="charCount">0</span>/500
+                                </div>
+                                <button class="send-btn" id="sendBtn" onclick="sendQuickMessage()" disabled>
+                                    <i class="fas fa-paper-plane"></i>
+                                    <span>Send</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -123,14 +171,362 @@
         </div>
     </div>
 
-    <script src="/static/js/auth.js"></script>
     <script>
         let freeUsesRemaining = 3;
+        let consultationMessages = [];
+
+        // Authentication validation object
+        const Auth = {
+            // Email validation
+            validateEmail(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    throw new Error('Please enter a valid email address');
+                }
+                
+                // Trusted email providers
+                const trustedDomains = [
+                    'gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 
+                    'icloud.com', 'protonmail.com', 'aol.com', 'live.com',
+                    'msn.com', 'yandex.com', 'mail.com', 'zoho.com'
+                ];
+                
+                const domain = email.split('@')[1].toLowerCase();
+                if (!trustedDomains.includes(domain)) {
+                    throw new Error('Please use a trusted email provider (Gmail, Yahoo, Outlook, etc.)');
+                }
+            },
+
+            // Password validation
+            validatePassword(password) {
+                const requirements = {
+                    length: password.length >= 8,
+                    uppercase: /[A-Z]/.test(password),
+                    lowercase: /[a-z]/.test(password),
+                    number: /\d/.test(password),
+                    special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+                };
+
+                const errors = [];
+                if (!requirements.length) errors.push('At least 8 characters');
+                if (!requirements.uppercase) errors.push('One uppercase letter');
+                if (!requirements.lowercase) errors.push('One lowercase letter');
+                if (!requirements.number) errors.push('One number');
+                if (!requirements.special) errors.push('One special character');
+
+                if (errors.length > 0) {
+                    throw new Error('Password must contain: ' + errors.join(', '));
+                }
+            },
+
+            // Update email feedback in real-time
+            updateEmailFeedback(email) {
+                const feedback = document.getElementById('emailFeedback');
+                if (!email) {
+                    feedback.textContent = '';
+                    return;
+                }
+
+                try {
+                    this.validateEmail(email);
+                    feedback.textContent = '✓ Valid email address';
+                    feedback.className = 'validation-feedback email-valid';
+                } catch (error) {
+                    feedback.textContent = '✗ ' + error.message;
+                    feedback.className = 'validation-feedback email-invalid';
+                }
+            },
+
+            // Update password feedback in real-time
+            updatePasswordFeedback(password) {
+                const requirementsDiv = document.getElementById('passwordRequirements');
+                if (!password) {
+                    requirementsDiv.innerHTML = '';
+                    return;
+                }
+
+                const requirements = [
+                    { test: password.length >= 8, text: 'At least 8 characters' },
+                    { test: /[A-Z]/.test(password), text: 'One uppercase letter' },
+                    { test: /[a-z]/.test(password), text: 'One lowercase letter' },
+                    { test: /\d/.test(password), text: 'One number' },
+                    { test: /[!@#$%^&*(),.?":{}|<>]/.test(password), text: 'One special character' }
+                ];
+
+                requirementsDiv.innerHTML = requirements.map(req => 
+                    `<li class="${req.test ? 'requirement-met' : 'requirement-unmet'}">
+                        ${req.test ? '✓' : '✗'} ${req.text}
+                    </li>`
+                ).join('');
+            }
+        };
+
+        // Quick Consultation Functions
+        async function startQuickConsultation() {
+            const quickConsultation = document.getElementById('quickConsultation');
+            quickConsultation.style.display = 'flex';
+            quickConsultation.scrollIntoView({ behavior: 'smooth' });
+            
+            // Check usage when starting consultation
+            await checkGuestUsage();
+        }
+
+        function closeQuickConsultation() {
+            document.getElementById('quickConsultation').style.display = 'none';
+        }
+
+        async function checkGuestUsage() {
+            try {
+                const response = await fetch('/api/guest/usage');
+                if (response.ok) {
+                    const data = await response.json();
+                    updateUsageDisplay(data);
+                    
+                    if (data.remaining === 0) {
+                        showQuotaReachedMessage();
+                    }
+                } else {
+                    // If endpoint doesn't exist, use cookie-based tracking
+                    const usage = getCookieUsage();
+                    updateUsageDisplay(usage);
+                    
+                    if (usage.remaining === 0) {
+                        showQuotaReachedMessage();
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to check usage:', error);
+                // Fallback to cookie-based tracking
+                const usage = getCookieUsage();
+                updateUsageDisplay(usage);
+                
+                if (usage.remaining === 0) {
+                    showQuotaReachedMessage();
+                }
+            }
+        }
+
+        function getCookieUsage() {
+            const today = new Date().toDateString();
+            const savedData = localStorage.getItem('guestUsage');
+            
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                if (data.date === today) {
+                    return {
+                        remaining: Math.max(0, 3 - data.count),
+                        total: 3,
+                        used: data.count
+                    };
+                }
+            }
+            
+            // Reset for new day
+            localStorage.setItem('guestUsage', JSON.stringify({
+                date: today,
+                count: 0
+            }));
+            
+            return { remaining: 3, total: 3, used: 0 };
+        }
+
+        function updateUsageDisplay(data) {
+            const usageCounter = document.getElementById('usageCounter');
+            const resetInfo = document.getElementById('resetInfo');
+            
+            usageCounter.textContent = `${data.remaining}/${data.total} free consultations remaining today`;
+            
+            // Calculate time until midnight
+            const now = new Date();
+            const midnight = new Date();
+            midnight.setHours(24, 0, 0, 0);
+            const msUntilMidnight = midnight - now;
+            const hoursUntilMidnight = Math.floor(msUntilMidnight / (1000 * 60 * 60));
+            const minutesUntilMidnight = Math.floor((msUntilMidnight % (1000 * 60 * 60)) / (1000 * 60));
+            
+            resetInfo.textContent = `Resets in ${hoursUntilMidnight}h ${minutesUntilMidnight}m`;
+        }
+
+        function showQuotaReachedMessage() {
+            const chatArea = document.getElementById('chatArea');
+            
+            const quotaMessage = document.createElement('div');
+            quotaMessage.className = 'quota-reached-message';
+            quotaMessage.innerHTML = `
+                <div class="quota-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="quota-content">
+                    <h3>Daily Limit Reached</h3>
+                    <p>You've used all 3 free consultations for today. Get unlimited access by creating an account!</p>
+                    <button class="btn btn-primary" onclick="openModal('registerModal')">
+                        <i class="fas fa-unlock"></i>
+                        Sign Up for Unlimited Access
+                    </button>
+                </div>
+            `;
+            
+            chatArea.appendChild(quotaMessage);
+            
+            // Disable input
+            const input = document.getElementById('quickInput');
+            const sendBtn = document.getElementById('sendBtn');
+            input.disabled = true;
+            input.placeholder = 'Daily limit reached - Sign up for unlimited access';
+            sendBtn.disabled = true;
+        }
+
+        async function sendQuickMessage() {
+            const input = document.getElementById('quickInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            // Check usage before sending
+            const usage = getCookieUsage();
+            if (usage.remaining <= 0) {
+                showQuotaReachedMessage();
+                return;
+            }
+
+            // Add user message to chat
+            addMessageToChat(message, 'user');
+            
+            // Clear input and disable send button
+            input.value = '';
+            updateCharCount();
+            const sendBtn = document.getElementById('sendBtn');
+            sendBtn.disabled = true;
+            sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Thinking...</span>';
+
+            try {
+                const response = await fetch('/api/chat/guest', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Add AI response to chat
+                    addMessageToChat(data.response, 'ai');
+                    
+                    // Update usage in localStorage
+                    const today = new Date().toDateString();
+                    const savedData = localStorage.getItem('guestUsage');
+                    const usageData = savedData ? JSON.parse(savedData) : { date: today, count: 0 };
+                    
+                    if (usageData.date === today) {
+                        usageData.count += 1;
+                    } else {
+                        usageData.date = today;
+                        usageData.count = 1;
+                    }
+                    
+                    localStorage.setItem('guestUsage', JSON.stringify(usageData));
+                    
+                    // Update usage display
+                    updateUsageDisplay({
+                        remaining: Math.max(0, 3 - usageData.count),
+                        total: 3,
+                        used: usageData.count
+                    });
+                    
+                    // Check if limit reached
+                    if (usageData.count >= 3) {
+                        setTimeout(() => showQuotaReachedMessage(), 1000);
+                    }
+                    
+                } else {
+                    const error = await response.json();
+                    addMessageToChat('Sorry, I encountered an error. Please try again.', 'ai', true);
+                }
+            } catch (error) {
+                console.error('Error sending message:', error);
+                addMessageToChat('Sorry, I encountered an error. Please try again.', 'ai', true);
+            }
+
+            // Reset send button
+            sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i><span>Send</span>';
+        }
+
+        function addMessageToChat(message, sender, isError = false) {
+            const chatArea = document.getElementById('chatArea');
+            
+            // Remove welcome message if it exists
+            const welcomeMessage = chatArea.querySelector('.welcome-message');
+            if (welcomeMessage) {
+                welcomeMessage.remove();
+            }
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message ${isError ? 'error-message' : ''}`;
+            
+            const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            if (sender === 'user') {
+                messageDiv.innerHTML = `
+                    <div class="message-content">
+                        <div class="message-text">${escapeHtml(message)}</div>
+                        <div class="message-time">${timestamp}</div>
+                    </div>
+                    <div class="message-avatar user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                `;
+            } else {
+                messageDiv.innerHTML = `
+                    <div class="message-avatar ai-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message-content">
+                        <div class="message-text">${formatAIResponse(message)}</div>
+                        <div class="message-time">${timestamp}</div>
+                    </div>
+                `;
+            }
+            
+            chatArea.appendChild(messageDiv);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        function formatAIResponse(text) {
+            // Basic markdown-like formatting
+            let formatted = escapeHtml(text);
+            formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            formatted = formatted.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            formatted = formatted.replace(/\n/g, '<br>');
+            return formatted;
+        }
+
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function updateCharCount() {
+            const input = document.getElementById('quickInput');
+            const charCount = document.getElementById('charCount');
+            const sendBtn = document.getElementById('sendBtn');
+            
+            const length = input.value.length;
+            charCount.textContent = length;
+            
+            // Enable/disable send button
+            sendBtn.disabled = length === 0 || length > 500;
+        }
 
         // Initialize particles
         function createParticles() {
             const container = document.getElementById('particles');
-            container.innerHTML = ''; // Clear existing particles
+            container.innerHTML = '';
             
             for (let i = 0; i < 50; i++) {
                 const particle = document.createElement('div');
@@ -153,105 +549,7 @@
             document.getElementById(modalId.replace('Modal', 'Error')).textContent = '';
         }
 
-        // Quick consultation
-        async function startQuickConsultation() {
-            const quickConsultation = document.getElementById('quickConsultation');
-            quickConsultation.style.display = 'block';
-            quickConsultation.scrollIntoView({ behavior: 'smooth' });
-            
-            // Check usage when starting consultation
-            await checkGuestUsage();
-        }
-
-        async function checkGuestUsage() {
-            try {
-                const response = await fetch('/api/guest/usage');
-                const data = await response.json();
-                updateUsageDisplay(data);
-                
-                if (data.remaining === 0) {
-                    showQuotaReachedMessage();
-                }
-            } catch (error) {
-                console.error('Failed to check usage:', error);
-            }
-        }
-
-        function updateUsageDisplay(data) {
-            const usageCounter = document.getElementById('usageCounter');
-            usageCounter.textContent = `${data.remaining}/${data.total} free messages remaining`;
-        }
-
-        function showQuotaReachedMessage() {
-            const consultationArea = document.getElementById('quickConsultation');
-            const inputArea = consultationArea.querySelector('.input-area');
-            const quotaMessage = document.createElement('div');
-            quotaMessage.className = 'limit-message';
-            quotaMessage.innerHTML = `
-                You've reached your daily quota! 
-                <button class="btn btn-primary" onclick="openModal('registerModal')" style="margin-left: 1rem;">
-                    Sign up for unlimited access
-                </button>
-            `;
-            
-            // Disable input and button
-            const textarea = document.getElementById('quickInput');
-            const sendButton = consultationArea.querySelector('.btn-primary');
-            textarea.disabled = true;
-            sendButton.disabled = true;
-            textarea.placeholder = 'Daily limit reached';
-            
-            // Add message at the top of consultation area
-            consultationArea.insertBefore(quotaMessage, consultationArea.firstChild);
-        }
-
-        async function sendQuickMessage() {
-            const input = document.getElementById('quickInput');
-            const message = input.value.trim();
-            
-            if (!message) return;
-
-            try {
-                const response = await fetch('/api/chat/guest', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ message })
-                });
-
-                const data = await response.json();
-                
-                if (!response.ok) {
-                    if (response.status === 429) {
-                        showQuotaReachedMessage();
-                        return;
-                    }
-                    throw new Error(data.detail.message || 'Failed to send message');
-                }
-
-                const responseDiv = document.getElementById('consultationResponse');
-                responseDiv.innerHTML = `
-                    <div class="chat-message user-message">${message}</div>
-                    <div class="chat-message bot-message">${data.response}</div>
-                `;
-                responseDiv.style.display = 'block';
-                input.value = '';
-                
-                updateUsageDisplay({
-                    remaining: data.remaining,
-                    total: data.total
-                });
-
-                if (data.remaining === 0) {
-                    showQuotaReachedMessage();
-                }
-            } catch (error) {
-                alert('An error occurred. Please try again.');
-            }
-        }
-
-        // Authentication
+        // Authentication forms
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const errorDiv = document.getElementById('loginError');
@@ -266,7 +564,7 @@
                         email: document.getElementById('loginEmail').value,
                         password: document.getElementById('loginPassword').value
                     }),
-                    credentials: 'include'  // Important for cookie handling
+                    credentials: 'include'
                 });
 
                 if (response.ok) {
@@ -288,14 +586,13 @@
             const password = document.getElementById('registerPassword').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
             const name = document.getElementById('registerName').value;
+            const errorDiv = document.getElementById('registerError');
             
             try {
-                // Check if passwords match
                 if (password !== confirmPassword) {
                     throw new Error('Passwords do not match');
                 }
                 
-                // Validate email and password
                 Auth.validateEmail(email);
                 Auth.validatePassword(password);
                 
@@ -304,24 +601,24 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ email, name, password })
+                    body: JSON.stringify({ email, name, password }),
+                    credentials: 'include'
                 });
 
                 if (response.ok) {
                     const data = await response.json();
                     localStorage.setItem('user', JSON.stringify(data.user));
-                    localStorage.setItem('token', data.access_token);
-                    window.location.href = '/chat';
+                    window.location.replace('/chat');
                 } else {
                     const error = await response.json();
-                    document.getElementById('registerError').textContent = error.detail;
+                    errorDiv.textContent = error.detail || 'Registration failed';
                 }
             } catch (error) {
-                document.getElementById('registerError').textContent = error.message;
+                errorDiv.textContent = error.message;
             }
         });
 
-        // Add this to your existing script section
+        // Event listeners
         document.getElementById('confirmPassword').addEventListener('input', function() {
             const password = document.getElementById('registerPassword').value;
             const confirmPassword = this.value;
@@ -344,15 +641,18 @@
             Auth.updatePasswordFeedback(this.value);
         });
 
-        // Add this with your other event listeners in the script section
         document.getElementById('registerEmail').addEventListener('input', function() {
             Auth.updateEmailFeedback(this.value);
         });
 
-        // Event listeners
+        document.getElementById('quickInput').addEventListener('input', updateCharCount);
+
         document.getElementById('quickInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                sendQuickMessage();
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                if (!document.getElementById('sendBtn').disabled) {
+                    sendQuickMessage();
+                }
             }
         });
 

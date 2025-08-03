@@ -17,8 +17,21 @@ import aiofiles
 
 app = FastAPI(title="RadiGlow API", description="Medical AI Chat Platform")
 
-# Mount static files
-app.mount("/static", StaticFiles(directory="static"), name="static")
+# FIXED: Custom StaticFiles class to disable caching
+class NoCacheStaticFiles(StaticFiles):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+    
+    def file_response(self, *args, **kwargs):
+        response = super().file_response(*args, **kwargs)
+        # Disable caching for CSS, JS, and other static files
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
+        return response
+
+# Mount static files with no caching
+app.mount("/static", NoCacheStaticFiles(directory="static"), name="static")
 
 # CORS middleware
 app.add_middleware(
