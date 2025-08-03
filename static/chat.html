@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>RadiGlow Chat</title>
+    <link rel="stylesheet" href="/static/css/chat.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="chat-container" id="chatContainer">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">RadiGlow</div>
+                <!-- FIXED: Close button inside sidebar (mobile only) -->
+                <button class="sidebar-close-btn" onclick="chat.toggleSidebar()" title="Close sidebar">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <button class="new-chat-btn" onclick="chat.startNewChat()">
+                <i class="fas fa-plus"></i> New Chat
+            </button>
+            
+            <div class="user-profile">
+                <div class="user-avatar"></div>
+                <div class="user-info">
+                    <div class="user-name"></div>
+                    <div class="user-email"></div>
+                </div>
+            </div>
+
+            <div class="chat-history">
+                <!-- Chat history items will be inserted here -->
+            </div>
+
+            <div class="sidebar-footer">
+                <button class="logout-btn" onclick="chat.handleLogout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="chat-main">
+            <!-- FIXED: Floating open button (mobile only) -->
+            <button class="sidebar-open-btn" onclick="chat.toggleSidebar()" title="Open sidebar">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <div class="chat-header">
+                <!-- This is now hidden on mobile -->
+            </div>
+
+            <div class="messages-container">
+                <!-- Messages will be inserted here -->
+            </div>
+
+            <div class="chat-input-area">
+                <!-- Image preview area -->
+                <div class="image-preview-container" id="imagePreview" style="display: none;">
+                    <div class="image-preview">
+                        <img id="previewImage" src="" alt="Preview">
+                        <button class="remove-image-btn" onclick="chat.removeImagePreview()" title="Remove image">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <div class="image-info">
+                            <div id="imageName"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-section">
+                    <button class="upload-btn" title="Upload Image" onclick="chat.triggerImageUpload()">
+                        <i class="fas fa-image"></i>
+                    </button>
+                    <div class="input-wrapper">
+                        <textarea
+                            id="messageInput"
+                            placeholder="Type your message..."
+                            rows="1"
+                        ></textarea>
+                        <button class="send-btn" disabled onclick="chat.sendMessage()">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Hidden file input -->
+                <input type="file" id="fileInput" accept="image/*" style="display: none;">
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Consolidated Chat Application
+        class ChatApp {
+            constructor() {
+                this.currentChatId = null;
+                this.selectedImage = null;
+                this.isNewChatEmpty = true;
+                
+                // Initialize mobile defaults
+                this.initMobileDefaults();
+                
+                // Add resize listener
+                this.initResizeListener();
+                
+                this.init();
+            }
+
+            // New method to handle mobile defaults
+            initMobileDefaults() {
+                const isMobile = window.innerWidth <= 768;
+                if (isMobile) {
+                    const chatContainer = document.getElementById('chatContainer');
+                    chatContainer.classList.add('sidebar-hidden'); // Start with sidebar hidden on mobile
+                    console.log('✅ Mobile detected - sidebar hidden by default');
+                }
+            }
+
+            // New method to handle window resize
+            initResizeListener() {
+                window.addEventListener('resize', () => {
+                    const isMobile = window.innerWidth <= 768;
+                    const chatContainer = document.getElementById('chatContainer');
+                    
+                    if (isMobile) {
+                        // Mobile: start with sidebar hidden
+                        chatContainer.classList.add('sidebar-hidden');
+                        console.log('✅ Switched to mobile - sidebar hidden');
+                    } else {
+                        // Desktop: show sidebar
+                        chatContainer.classList.remove('sidebar-hidden');
+                        console.log('✅ Switched to desktop - sidebar visible');
+                    }
+                });
+            }
+
+            async init() {
+                await this.checkAuth();
+                this.initEventListeners();
+                // FIXED: Load latest chat instead of starting new chat
+                await this.loadLatestChatOrStartNew();
+            }
+
+            initEventListeners() {
+                const messageInput = document.getElementById('messageInput');
+                const fileInput = document.getElementById('fileInput');
+
+                messageInput.addEventListener('input', () => {
+                    this.updateSendButton();
+                    this.autoResizeTextarea();
+                });
+
+                messageInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.sendMessage();
+                    }
+                });
+
+                fileInput.addEventListener('change', (e) => this.handleFileInput(e));
+            }
+
+            toggleSidebar() {
+                const chatContainer = document.getElementById('chatContainer');
+                chatContainer.classList.toggle('sidebar-hidden');
+                console.log('🔄 Sidebar toggled');
+            }
+
+            // FIXED: Auto-close sidebar on mobile after actions
+            closeSidebarOnMobile() {
+                const isMobile = window.innerWidth <= 768;
+                if (isMobile) {
+                    const chatContainer = document.getElementById('chatContainer');
+                    chatContainer.classList.add('sidebar-hidden');
+                    console.log('📱 Auto-closed sidebar on mobile');
+                }
+            }
+
+            async checkAuth() {
+                try {
+                    const response = await fetch('/api/user/chats', { credentials: 'include' });
+                    
+                    if (!response.ok) {
+                        window.location.replace('/');
+                        return;
+                    }
+                    
+                    const user = JSON.parse(localStorage.getItem('user') || '{}');
+                    if (!user.name) {
+                        window.location.replace('/');
+                        return;
+                    }
+                    
+                    // Update UI with user info
+                    document.querySelector('.user-avatar').textContent = user.name[0].toUpperCase();
+                    document.querySelector('.user-name').textContent = user.name;
+                    document.querySelector('.user-email').textContent = user.email;
+                    
+                    // Load chats and store them
+                    const chats = await response.json();
+                    this.userChats = chats; // Store chats for later use
+                    this.updateChatList(chats);
+                } catch (error) {
+                    console.error('Auth check failed:', error);
+                    window.location.replace('/');
+                }
+            }
+
+            // FIXED: New function to load latest chat on login
+            async loadLatestChatOrStartNew() {
+                if (this.userChats && this.userChats.length > 0) {
+                    // Load the most recent chat (first in the list since they're sorted by updated_at DESC)
+                    const latestChat = this.userChats[0];
+                    console.log(`✅ Loading latest chat: ${latestChat.id}`);
+                    await this.loadChat(latestChat.id);
+                } else {
+                    // No chats exist, start a new one
+                    console.log('✅ No existing chats, starting new chat');
+                    this.startNewChat();
+                }
+            }
+
+            updateChatList(chats) {
+                const chatList = document.querySelector('.chat-history');
+                if (chats.length === 0) {
+                    chatList.innerHTML = `
+                        <div class="empty-history">
+                            <i class="fas fa-comments"></i>
+                            <p>No chat history yet</p>
+                            <p>Start a new conversation!</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                chatList.innerHTML = chats.map(chat => `
+                    <div class="chat-item" onclick="chat.loadChat('${chat.id}')" data-chat-id="${chat.id}">
+                        <div class="chat-title">${chat.title}</div>
+                        <div class="chat-item-date">
+                            ${new Date(chat.created_at).toLocaleString()}
+                        </div>
+                        <button class="delete-chat-btn" onclick="chat.deleteChat('${chat.id}', event)" title="Delete chat">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `).join('');
+            }
+
+            async loadChat(chatId) {
+                try {
+                    const response = await fetch(`/api/chat/${chatId}`, { credentials: 'include' });
+                    
+                    if (!response.ok) throw new Error('Failed to load chat');
+                    
+                    const chat = await response.json();
+                    
+                    // CRITICAL: Set the current chat ID BEFORE anything else
+                    this.currentChatId = chatId;
+                    this.isNewChatEmpty = false;
+                    this.updateChatMessages(chat.messages);
+                    
+                    // Mark as active in sidebar
+                    document.querySelectorAll('.chat-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    document.querySelector(`[data-chat-id="${chatId}"]`)?.classList.add('active');
+                    
+                    console.log(`✅ Loaded chat: ${chatId} with ${chat.messages.length} messages. Current chat ID set to: ${this.currentChatId}`);
+                    
+                    // FIXED: Auto-close sidebar on mobile after loading chat
+                    this.closeSidebarOnMobile();
+                    
+                } catch (error) {
+                    console.error('Failed to load chat:', error);
+                    this.showError('Failed to load chat');
+                }
+            }
+
+            async deleteChat(chatId, event) {
+                event.stopPropagation();
+                
+                if (!confirm('Are you sure you want to delete this chat?')) return;
+                
+                try {
+                    const response = await fetch(`/api/chat/${chatId}`, {
+                        method: 'DELETE',
+                        credentials: 'include'
+                    });
+                    
+                    if (!response.ok) throw new Error('Failed to delete chat');
+                    
+                    if (this.currentChatId === chatId) {
+                        this.startNewChat();
+                    }
+                    
+                    await this.refreshChatList();
+                    
+                    // FIXED: Auto-close sidebar on mobile after deleting chat
+                    this.closeSidebarOnMobile();
+                    
+                } catch (error) {
+                    console.error('Failed to delete chat:', error);
+                    this.showError('Failed to delete chat');
+                }
+            }
+
+            startNewChat() {
+                // FIXED: Remove the annoying error message
+                this.currentChatId = null;
+                this.selectedImage = null;
+                this.isNewChatEmpty = true;
+                this.removeImagePreview();
+                
+                document.querySelector('.messages-container').innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                        <i class="fas fa-comments" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                        <p>Start a new conversation</p>
+                        <p style="font-size: 0.9rem;">Type your message below to begin</p>
+                    </div>
+                `;
+                
+                document.querySelectorAll('.chat-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                
+                console.log('✅ Started new chat. Current chat ID set to: null');
+                document.getElementById('messageInput').focus();
+                
+                // FIXED: Auto-close sidebar on mobile after starting new chat
+                this.closeSidebarOnMobile();
+            }
+
+            triggerImageUpload() {
+                document.getElementById('fileInput').click();
+            }
+
+            handleFileInput(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                if (!file.type.startsWith('image/')) {
+                    this.showError('Please select an image file');
+                    return;
+                }
+                
+                if (file.size > 5 * 1024 * 1024) {
+                    this.showError('Image size must be less than 5MB');
+                    return;
+                }
+                
+                this.selectedImage = file;
+                this.showImagePreview(file);
+                this.updateSendButton();
+            }
+
+            showImagePreview(file) {
+                const previewContainer = document.getElementById('imagePreview');
+                const previewImage = document.getElementById('previewImage');
+                const imageName = document.getElementById('imageName');
+                
+                const url = URL.createObjectURL(file);
+                previewImage.src = url;
+                imageName.textContent = file.name;
+                
+                previewContainer.style.display = 'block';
+            }
+
+            removeImagePreview() {
+                const previewContainer = document.getElementById('imagePreview');
+                const previewImage = document.getElementById('previewImage');
+                const fileInput = document.getElementById('fileInput');
+                
+                previewContainer.style.display = 'none';
+                if (previewImage.src) {
+                    URL.revokeObjectURL(previewImage.src);
+                    previewImage.src = '';
+                }
+                fileInput.value = '';
+                this.selectedImage = null;
+                this.updateSendButton();
+            }
+
+            updateSendButton() {
+                const messageInput = document.getElementById('messageInput');
+                const sendButton = document.querySelector('.send-btn');
+                const hasText = messageInput.value.trim().length > 0;
+                const hasImage = this.selectedImage !== null;
+                
+                sendButton.disabled = !(hasText || hasImage);
+            }
+
+            setLoadingState(isLoading) {
+                const sendButton = document.querySelector('.send-btn');
+                const uploadButton = document.querySelector('.upload-btn');
+                const messageInput = document.getElementById('messageInput');
+                
+                if (isLoading) {
+                    sendButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                    sendButton.disabled = true;
+                    uploadButton.disabled = true;
+                    messageInput.disabled = true;
+                } else {
+                    sendButton.innerHTML = '<i class="fas fa-paper-plane"></i>';
+                    uploadButton.disabled = false;
+                    messageInput.disabled = false;
+                    this.updateSendButton();
+                }
+            }
+
+            async sendMessage() {
+                const messageInput = document.getElementById('messageInput');
+                const message = messageInput.value.trim();
+                
+                if (!message && !this.selectedImage) return;
+                
+                // CRITICAL DEBUG: Log the current state
+                console.log(`🚀 BEFORE SENDING - Current chat ID: ${this.currentChatId}`);
+                console.log(`📝 User message: "${message}"`);
+                console.log(`🖼️ Has image: ${!!this.selectedImage}`);
+                
+                this.setLoadingState(true);
+                
+                try {
+                    let response;
+                    let data;
+                    const wasNewChat = !this.currentChatId;
+                    
+                    if (this.selectedImage) {
+                        // CRITICAL FIX: Image upload with proper chat continuation
+                        const formData = new FormData();
+                        formData.append('file', this.selectedImage);
+                        formData.append('text', message || ''); // User's exact text
+                        
+                        // MOST IMPORTANT: Send the CURRENT chat ID
+                        const chatIdToSend = this.currentChatId || '';
+                        formData.append('chat_id', chatIdToSend);
+                        
+                        console.log(`📤 SENDING IMAGE - Chat ID: "${chatIdToSend}"`);
+                        console.log(`📝 Text with image: "${message}"`);
+                        
+                        response = await fetch('/api/chat/upload', {
+                            method: 'POST',
+                            credentials: 'include',
+                            body: formData
+                        });
+                        
+                        if (!response.ok) {
+                            const errorData = await response.json();
+                            throw new Error(errorData.detail || 'Failed to upload image');
+                        }
+                        
+                        data = await response.json();
+                        console.log('📥 Image response received:', data);
+                        
+                        // CRITICAL: Verify we're getting the same chat ID back
+                        if (!wasNewChat && data.id !== this.currentChatId) {
+                            console.error(`❌ CHAT ID MISMATCH! Expected: ${this.currentChatId}, Got: ${data.id}`);
+                        } else {
+                            console.log(`✅ Chat ID correct: ${data.id}`);
+                        }
+                        
+                    } else {
+                        // Text-only message
+                        console.log(`📤 SENDING TEXT - Chat ID: "${this.currentChatId || 'NEW'}"`);
+                        
+                        response = await fetch('/api/chat/send', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            credentials: 'include',
+                            body: JSON.stringify({
+                                message: message,
+                                chat_id: this.currentChatId
+                            })
+                        });
+                        
+                        if (!response.ok) throw new Error('Failed to send message');
+                        
+                        data = await response.json();
+                        console.log('📥 Text response received:', data);
+                    }
+                    
+                    // CRITICAL: Update state and messages
+                    this.currentChatId = data.id;
+                    this.isNewChatEmpty = false;
+                    this.updateChatMessages(data.messages);
+                    
+                    console.log(`✅ AFTER PROCESSING - Current chat ID: ${this.currentChatId}`);
+                    
+                    // Only refresh chat list and mark active if it was a new chat
+                    if (wasNewChat) {
+                        await this.refreshChatList();
+                        setTimeout(() => {
+                            document.querySelector(`[data-chat-id="${this.currentChatId}"]`)?.classList.add('active');
+                        }, 100);
+                    }
+                    
+                    // Clear input and image preview
+                    messageInput.value = '';
+                    this.removeImagePreview();
+                    
+                    console.log(`✅ Message sent successfully in chat: ${this.currentChatId}`);
+                    
+                } catch (error) {
+                    console.error('Failed to send message:', error);
+                    this.showError(`Failed to send message: ${error.message}`);
+                } finally {
+                    this.setLoadingState(false);
+                    messageInput.focus();
+                }
+            }
+
+            async refreshChatList() {
+                try {
+                    const response = await fetch('/api/user/chats', { credentials: 'include' });
+                    if (response.ok) {
+                        const chats = await response.json();
+                        this.userChats = chats; // Update stored chats
+                        this.updateChatList(chats);
+                    }
+                } catch (error) {
+                    console.error('Failed to refresh chat list:', error);
+                }
+            }
+
+            updateChatMessages(messages) {
+                const chatMessages = document.querySelector('.messages-container');
+                const user = JSON.parse(localStorage.getItem('user') || '{}');
+                
+                chatMessages.innerHTML = messages.map(msg => {
+                    const isUser = msg.sender === 'user';
+                    const avatarText = isUser ? (user.name?.[0]?.toUpperCase() || 'U') : 'R';
+                    
+                    return `
+                        <div class="message ${msg.sender}-message">
+                            <div class="message-avatar">${avatarText}</div>
+                            <div>
+                                <div class="message-bubble">
+                                    <div class="message-content">${this.formatMessageText(msg.content)}</div>
+                                </div>
+                                <div class="message-time">${new Date(msg.created_at).toLocaleString()}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            formatMessageText(text) {
+                let formattedText = this.escapeHtml(text);
+                formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                formattedText = formattedText.replace(/\n/g, '<br>');
+                
+                if (formattedText.length > 1500) {
+                    formattedText = formattedText.substring(0, 1497) + '...';
+                }
+                
+                return formattedText;
+            }
+
+            escapeHtml(unsafe) {
+                return unsafe
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+            }
+
+            showError(message) {
+                const existingError = document.querySelector('.chat-error');
+                if (existingError) existingError.remove();
+                
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'chat-error';
+                errorDiv.innerHTML = `
+                    <i class="fas fa-exclamation-circle"></i>
+                    ${message}
+                `;
+                
+                const messagesContainer = document.querySelector('.messages-container');
+                messagesContainer.insertAdjacentElement('beforebegin', errorDiv);
+                
+                setTimeout(() => {
+                    errorDiv.classList.add('fade-out');
+                    setTimeout(() => errorDiv.remove(), 300);
+                }, 5000);
+            }
+
+            handleLogout() {
+                localStorage.removeItem('user');
+                document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                window.location.replace('/');
+            }
+
+            autoResizeTextarea() {
+                const textarea = document.getElementById('messageInput');
+                textarea.style.height = 'auto';
+                const newHeight = Math.min(textarea.scrollHeight, 120);
+                textarea.style.height = newHeight + 'px';
+            }
+        }
+
+        // Initialize chat application
+        const chat = new ChatApp();
+    </script>
+</body>
+</html>

@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RadiGlow - AI Medical Assistant</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <!-- Animated background particles -->
+    <div class="bg-particles" id="particles"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">RadiGlow</div>
+        <div class="auth-buttons">
+            <button class="btn btn-secondary" onclick="openModal('loginModal')">Login</button>
+            <button class="btn btn-primary" onclick="openModal('registerModal')">Sign Up</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Landing Page -->
+        <div class="landing">
+            <h1 class="hero-title">RadiGlow</h1>
+            <p class="hero-subtitle">Your AI-Powered Medical Assistant</p>
+            <p style="margin-bottom: 2rem;">Get instant, accurate medical information and guidance powered by advanced AI technology.</p>
+            
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="startQuickConsultation()">
+                    Quick Consultation
+                </button>
+                <button class="btn btn-secondary" onclick="openModal('registerModal')">
+                    Full Access
+                </button>
+            </div>
+
+            <div class="features">
+                <div class="feature-card">
+                    <h3>🏥 Medical Expertise</h3>
+                    <p>Fine-tuned on extensive medical literature and clinical data for accurate, reliable responses.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>💬 Conversational AI</h3>
+                    <p>Natural language processing that understands context and maintains conversation history.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📱 Easy Access</h3>
+                    <p>Try 3 consultations daily for free, or create an account for unlimited access and chat history.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Consultation -->
+        <div class="quick-consultation" id="quickConsultation" style="display: none;">
+            <h2>Quick Medical Consultation</h2>
+            <div class="usage-counter" id="usageCounter">3/3 free messages remaining</div>
+            
+            <div class="chat-area">
+                <div class="input-area">
+                    <textarea 
+                        id="quickInput" 
+                        placeholder="Ask me any medical question..." 
+                        rows="3"
+                    ></textarea>
+                    <button class="btn btn-primary" onclick="Auth.handleQuickChat()">
+                        Send Message
+                    </button>
+                </div>
+                <div class="consultation-response" id="consultationResponse"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('loginModal')">&times;</span>
+            <h2>Welcome Back</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                </div>
+                <div class="error-message" id="loginError"></div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('registerModal')">&times;</span>
+            <h2>Sign Up</h2>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="registerName" placeholder="Enter your full name" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="registerEmail" placeholder="Enter your email" required>
+                    <div class="validation-feedback" id="emailFeedback"></div>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="registerPassword" placeholder="Create a password" required>
+                    <ul class="requirements-list" id="passwordRequirements"></ul>
+                </div>
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
+                    <div id="passwordMatch" class="validation-feedback"></div>
+                </div>
+                <div class="error-message" id="registerError"></div>
+                <button type="submit" class="btn btn-primary">Create Account</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/js/auth.js"></script>
+    <script>
+        let freeUsesRemaining = 3;
+
+        // Initialize particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            container.innerHTML = ''; // Clear existing particles
+            
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            document.getElementById(modalId.replace('Modal', 'Error')).textContent = '';
+        }
+
+        // Quick consultation
+        async function startQuickConsultation() {
+            const quickConsultation = document.getElementById('quickConsultation');
+            quickConsultation.style.display = 'block';
+            quickConsultation.scrollIntoView({ behavior: 'smooth' });
+            
+            // Check usage when starting consultation
+            await checkGuestUsage();
+        }
+
+        async function checkGuestUsage() {
+            try {
+                const response = await fetch('/api/guest/usage');
+                const data = await response.json();
+                updateUsageDisplay(data);
+                
+                if (data.remaining === 0) {
+                    showQuotaReachedMessage();
+                }
+            } catch (error) {
+                console.error('Failed to check usage:', error);
+            }
+        }
+
+        function updateUsageDisplay(data) {
+            const usageCounter = document.getElementById('usageCounter');
+            usageCounter.textContent = `${data.remaining}/${data.total} free messages remaining`;
+        }
+
+        function showQuotaReachedMessage() {
+            const consultationArea = document.getElementById('quickConsultation');
+            const inputArea = consultationArea.querySelector('.input-area');
+            const quotaMessage = document.createElement('div');
+            quotaMessage.className = 'limit-message';
+            quotaMessage.innerHTML = `
+                You've reached your daily quota! 
+                <button class="btn btn-primary" onclick="openModal('registerModal')" style="margin-left: 1rem;">
+                    Sign up for unlimited access
+                </button>
+            `;
+            
+            // Disable input and button
+            const textarea = document.getElementById('quickInput');
+            const sendButton = consultationArea.querySelector('.btn-primary');
+            textarea.disabled = true;
+            sendButton.disabled = true;
+            textarea.placeholder = 'Daily limit reached';
+            
+            // Add message at the top of consultation area
+            consultationArea.insertBefore(quotaMessage, consultationArea.firstChild);
+        }
+
+        async function sendQuickMessage() {
+            const input = document.getElementById('quickInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            try {
+                const response = await fetch('/api/chat/guest', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message })
+                });
+
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    if (response.status === 429) {
+                        showQuotaReachedMessage();
+                        return;
+                    }
+                    throw new Error(data.detail.message || 'Failed to send message');
+                }
+
+                const responseDiv = document.getElementById('consultationResponse');
+                responseDiv.innerHTML = `
+                    <div class="chat-message user-message">${message}</div>
+                    <div class="chat-message bot-message">${data.response}</div>
+                `;
+                responseDiv.style.display = 'block';
+                input.value = '';
+                
+                updateUsageDisplay({
+                    remaining: data.remaining,
+                    total: data.total
+                });
+
+                if (data.remaining === 0) {
+                    showQuotaReachedMessage();
+                }
+            } catch (error) {
+                alert('An error occurred. Please try again.');
+            }
+        }
+
+        // Authentication
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const errorDiv = document.getElementById('loginError');
+            
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: document.getElementById('loginEmail').value,
+                        password: document.getElementById('loginPassword').value
+                    }),
+                    credentials: 'include'  // Important for cookie handling
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    window.location.replace('/chat');
+                } else {
+                    const error = await response.json();
+                    errorDiv.textContent = error.detail || 'Login failed';
+                }
+            } catch (error) {
+                errorDiv.textContent = 'An error occurred. Please try again.';
+            }
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const name = document.getElementById('registerName').value;
+            
+            try {
+                // Check if passwords match
+                if (password !== confirmPassword) {
+                    throw new Error('Passwords do not match');
+                }
+                
+                // Validate email and password
+                Auth.validateEmail(email);
+                Auth.validatePassword(password);
+                
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, name, password })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    localStorage.setItem('token', data.access_token);
+                    window.location.href = '/chat';
+                } else {
+                    const error = await response.json();
+                    document.getElementById('registerError').textContent = error.detail;
+                }
+            } catch (error) {
+                document.getElementById('registerError').textContent = error.message;
+            }
+        });
+
+        // Add this to your existing script section
+        document.getElementById('confirmPassword').addEventListener('input', function() {
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = this.value;
+            const matchDisplay = document.getElementById('passwordMatch');
+            
+            if (confirmPassword) {
+                if (password === confirmPassword) {
+                    matchDisplay.textContent = '✓ Passwords match';
+                    matchDisplay.className = 'validation-feedback passwords-match';
+                } else {
+                    matchDisplay.textContent = '✗ Passwords do not match';
+                    matchDisplay.className = 'validation-feedback passwords-dont-match';
+                }
+            } else {
+                matchDisplay.textContent = '';
+            }
+        });
+
+        document.getElementById('registerPassword').addEventListener('input', function() {
+            Auth.updatePasswordFeedback(this.value);
+        });
+
+        // Add this with your other event listeners in the script section
+        document.getElementById('registerEmail').addEventListener('input', function() {
+            Auth.updateEmailFeedback(this.value);
+        });
+
+        // Event listeners
+        document.getElementById('quickInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendQuickMessage();
+            }
+        });
+
+        window.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.style.display = 'none';
+            }
+        });
+
+        // Initialize
+        createParticles();
+    </script>
+</body>
+</html>

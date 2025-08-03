@@ -1,0 +1,33 @@
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+
+# Database files
+*.db
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# Test files
+test_*
+*_test.py
+failed_tests/
+
+# Temporary files
+tmp/
+temp/
