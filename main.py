@@ -209,8 +209,8 @@ async def guest_chat(message: GuestMessage, request: Request):
         usage_count = db.increment_guest_usage(client_ip, current_date)
         
         # Use the medical API client for guest messages (text-only, will use Gemini)
-        api_response = await medical_api_client.process_message(message.message, max_tokens=100)
-        
+        api_response = await medical_api_client.process_message(message.message, max_tokens=500)
+
         return {
             "message": message.message,
             "response": api_response['response'],
@@ -248,7 +248,7 @@ async def send_message(message: ChatMessage, request: Request):
         chat_db.add_message(chat_id, message.message, "user", user_id, user_key)
         
         # Use the medical API client to generate response (text-only, will use Gemini)
-        api_response = await medical_api_client.process_message(message.message, max_tokens=200)
+        api_response = await medical_api_client.process_message(message.message, max_tokens=500)
         
         # Add AI response
         chat_db.add_message(chat_id, api_response['response'], "assistant", user_id, user_key)
@@ -330,7 +330,7 @@ async def upload_image(file: UploadFile = File(...), text: str = "", chat_id: st
         api_response = await medical_api_client.process_message(
             api_prompt,
             image_data=image_data,
-            max_tokens=200
+            max_tokens=500
         )
         
         # Add AI response to the SAME chat
