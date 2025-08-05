@@ -330,7 +330,7 @@ async def upload_image(file: UploadFile = File(...), text: str = "", chat_id: st
         api_response = await medical_api_client.process_message(
             api_prompt,
             image_data=image_data,
-            max_tokens=500
+            max_tokens=500  # ⬅️ INCREASED from 200 to 500 for detailed analysis
         )
         
         # Add AI response to the SAME chat
